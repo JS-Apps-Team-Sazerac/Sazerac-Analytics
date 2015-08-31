@@ -7,7 +7,9 @@
     <link rel="stylesheet" href="../Css/KendoUI/kendo.office365.min.css" />
 </head>
 <body>
-    <div id="pie-chart" style="width:400px; height:400px"></div>
+    <div id="pie-chart-browsers" style="width:400px; height:400px"></div>
+	<div id="pie-chart-systems" style="width:400px; height:400px"></div>
+	<div id="pie-chart-countries" style="width:400px; height:400px"></div>
 
     <script type="text/javascript" src="../Lib/jquery-2.1.4.js"></script>
     <script type="text/javascript" src="../Lib/kendo.all.min.js"></script>
@@ -79,7 +81,7 @@
                         },
                         {
                             "Name": "Windows 8",
-                            "Count": 1234
+                            "Count": 12
                         }
                     ]
                 ]
@@ -105,7 +107,7 @@
                     [
                         {
                             "Name": "Bulgaria",
-                            "Count": 22
+                            "Count": 222
                         },
                         {
                             "Name": "Russia",
@@ -113,14 +115,15 @@
                         },
                         {
                             "Name": "Romania",
-                            "Count": 1234
+                            "Count": 123
                         }
                     ]
                 ]
             }
         })
-        display("#pie-chart").pieChart("browsers", JSON.parse(dataObjectToParse).browsers);
-        
+        display("#pie-chart-browsers").pieChart("browsers", JSON.parse(dataObjectToParse).browsers);
+        display("#pie-chart-systems").pieChart("Systems", JSON.parse(dataObjectToParse).systems);
+		display("#pie-chart-countries").pieChart("Countries", JSON.parse(dataObjectToParse).countries);
     </script>
 </body>
 </html>
