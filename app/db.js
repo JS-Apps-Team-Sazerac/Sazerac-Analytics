@@ -1,65 +1,56 @@
 
 import $ from 'jquery';
+import _ from 'underscore';
 import cache from 'cache';
-
 
 function init(remoteApiUrl) {
 
 	this.remoteApiUrl = remoteApiUrl;
-}
-
-// TODO: Move to separete module
-function concentrateObjects() {
-	var p, len, i, ret = {};
-  	len = arguments.length;
-  	for (i = 0; i < len; i += 1) {
-    	for (p in arguments[i]) {
-    		if (arguments[i].hasOwnProperty(p)) {
-        		ret[p] = arguments[i][p];
-      		}
-    	}
-  	}
-  	return ret;
+	this.serverDayStart = '2015-08-31 00:00:00';
+	this.serverDayStartConverted = new Date(this.serverDayStart);
 }
 
 // TODO: Break into functions
 // TODO: We must make atleast one request to take the serverDayStart
 // TODO: UI must have manually predefined min and max date or server handle this, otherwise there will be problems
 
-function query(dataToQuery, fromDateTime, toDateTime) {
+function query(dataToQuery, fromDateTime, toDateTime, bypassCache) {
 
 	var url, fromDateTimeConverted, toDateTimeConverted, cacheObj, cachedObjectsCollection = {},
-	 dataQueryParams = '&query=', isThereDataToRequest = false, promise;
+	 dataQueryParams = '&query=', isThereDataToRequest = false, queryingOnlyTodayStats, promise;
 
 	fromDateTimeConverted = new Date(fromDateTime);
 	toDateTimeConverted = new Date(toDateTime);
 
-	dataToQuery.forEach(function(name) {
+	if(bypassCache == false) {
+		dataToQuery.forEach(function(name) {
 
-		// FIXME: For now we skip querying the cache if toDateTime is current day which statistics are still being gathered
-		// We must implement feature to check if it can gather all statistics until day before and just current day statistics from server
+			// FIXME: For now we skip querying the cache if toDateTime is current day which statistics are still being gathered
+			// We must implement feature to check if it can gather all statistics until day before and just current day statistics from server
 
-		if(toDateTime === this.serverDayStart) {
-			cacheObj = undefined;
-		} else {
 			cachedObj = cache.query(name, fromDateTimeConverted, toDateTimeConverted);
-		}
+			if(typeof cachedObj !== 'undefined') {
+				cachedObjectsCollection[name] = cachedObj;
+			} else {
+				isThereDataToRequest = true;
+			}
 
-		if(typeof cachedObj !== 'undefined') {
-			cachedObjectsCollection[name] = cachedObj;
-		} else {
-			isThereDataToRequest = true;
-			dataQueryParams += name + ':';
-		}
-	});
+		});
+	}
 
-	if(isThereDataToRequest == false) {
+	if(isThereDataToRequest == false && bypassCache == false) {
 		return new Promise(function(resolve, reject) {
 			console.log("We got all info from cache - no request.");
 			console.log(cachedObjectsCollection);
 			resolve(cachedObjectsCollection);
 		});
 	}
+
+	dataToQuery.forEach(function(name) {
+		if(typeof cachedObjectsCollection[name] === 'undefined') {
+			dataQueryParams += name + ':';
+		}
+	});
 
 	dataQueryParams += '&from=' + fromDateTime + '&to=' + toDateTime;
 	url = this.remoteApiUrl + dataQueryParams;
@@ -71,17 +62,18 @@ function query(dataToQuery, fromDateTime, toDateTime) {
             contentType: 'application/json',
             success: function(data) {
 
-            	this.serverDayStart = data.serverDayStart;
+            	if(bypassCache == false) {
+                    dataToQuery.forEach(function(name) {
+            			if(typeof data[name] !== 'undefined') {
+            				cache.store(name, data[name], fromDateTimeConverted, toDateTimeConverted);
+            			}
+            		});
 
-            	dataToQuery.forEach(function(name) {
-            		if(typeof data[name] !== 'undefined') {
-            			cache.store(name, data[name], fromDateTimeConverted, toDateTimeConverted);
+            		if($.isEmptyObject(cachedObjectsCollection) == false) {
+            			data = _.concentrateObjects(data, cachedObjectsCollection);	
             		}
-            	});
-
-            	if($.isEmptyObject(cachedObjectsCollection) == false) {
-            		data = concentrateObjects(data, cachedObjectsCollection);	
             	}
+
           		console.log(data);
             	resolve(data);
             },

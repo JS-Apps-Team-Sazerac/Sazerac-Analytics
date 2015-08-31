@@ -1,76 +1,120 @@
-/// <reference path="../lib/jquery-2.1.4.js" />
-
-'use strict'
 
 import $ from 'jquery';
-import themeScripts from 'themeScripts';
+import _ from 'underscore';
+import _ext from 'underscoreExt';
+import db from 'db';
+import display from 'display';
 
-$(document).ready(function () {
-    var template_url = location.hash.replace(/^#/, '');
-    if (template_url.length < 1) {
-        template_url = 'templates/browsers.html';
-    }
+_ext.init();
+display.init();
 
-    $('.show-sidebar').on('click', function (e) {
-        e.preventDefault();
-        $('div#main').toggleClass('sidebar-show');
-    });
-      
-    
-    themeScripts.LoadAjaxContent(template_url);
-    //themeScripts.LoadGoogleApi();
-
-    $('.main-menu').on('click', 'a', function (e) {
-        var parents = $(this).parents('li');
-        var li = $(this).closest('li.dropdown');
-        var another_items = $('.main-menu li').not(parents);
-        another_items.find('a').removeClass('active');
-        another_items.find('a').removeClass('active-parent');
-        if ($(this).hasClass('dropdown-toggle') || $(this).closest('li').find('ul').length == 0) {
-            $(this).addClass('active-parent');
-
-            var current = $(this).next();
-
-            if (current.is(':visible')) {
-                li.find("ul.dropdown-menu").slideUp('fast');
-                li.find("ul.dropdown-menu a").removeClass('active')
+  var dataObjectToParse = JSON.stringify({
+            "serverDayStart": "2015-08-31 00:00:00",
+            "browsers": {
+                "fromDateTime": "2015-08-29 00:00:00",
+                "toDateTime": "2016-08-30 00:00:00",
+                "Data": [
+                    [
+                        {
+                            "Name": "Internet Explorer",
+                            "Count": 10
+                        },
+                        {
+                            "Name": "Firefox",
+                            "Count": 54
+                        },
+                        {
+                            "Name": "Opera",
+                            "Count": 78
+                        }
+                    ],
+                    [
+                        {
+                            "Name": "Safari",
+                            "Count": 22
+                        },
+                        {
+                            "Name": "Chrome",
+                            "Count": 134
+                        },
+                        {
+                            "Name": "Internet Explorer",
+                            "Count": 12
+                        }
+                    ]
+                ]
+            },
+            "systems": {
+                "fromDateTime": "2015-08-29 00:00:00",
+                "toDateTime": "2016-08-30 00:00:00",
+                "Data": [
+                    [
+                        {
+                            "Name": "Windows XP",
+                            "Count": 10
+                        },
+                        {
+                            "Name": "Windows 8.1",
+                            "Count": 54
+                        },
+                        {
+                            "Name": "Windows 7",
+                            "Count": 78
+                        }
+                    ],
+                    [
+                        {
+                            "Name": "Windows 10",
+                            "Count": 22
+                        },
+                        {
+                            "Name": "Windows XP",
+                            "Count": 134
+                        },
+                        {
+                            "Name": "Windows 8",
+                            "Count": 12
+                        }
+                    ]
+                ]
+            },
+            "countries": {
+                "fromDateTime": "2015-08-29 00:00:00",
+                "toDateTime": "2016-08-30 00:00:00",
+                "Data": [
+                    [
+                        {
+                            "Name": "Czech Republic",
+                            "Count": 10
+                        },
+                        {
+                            "Name": "United States Of America",
+                            "Count": 54
+                        },
+                        {
+                            "Name": "Venezuela",
+                            "Count": 78
+                        }
+                    ],
+                    [
+                        {
+                            "Name": "Bulgaria",
+                            "Count": 222
+                        },
+                        {
+                            "Name": "Russia",
+                            "Count": 134
+                        },
+                        {
+                            "Name": "Romania",
+                            "Count": 123
+                        }
+                    ]
+                ]
             }
-            else {
-                another_items.find("ul.dropdown-menu").slideUp('fast');
-                current.slideDown('fast');
-            }
-        }
-        else {
-            if (li.find('a.dropdown-toggle').hasClass('active-parent')) {
+        });
 
-                var pre = $(this).closest('ul.dropdown-menu');
+display.drawPieChart("#pie-chart-browsers","browsers", JSON.parse(dataObjectToParse).browsers);
+display.drawPieChart("#pie-chart-systems","Systems", JSON.parse(dataObjectToParse).systems);
+display.drawPieChart("#pie-chart-countries","Countries", JSON.parse(dataObjectToParse).countries);
 
-                pre.find("li.dropdown").not($(this).closest('li'))
-                    .find('ul.dropdown-menu').slideUp('fast');
-            }
-        }
-        if ($(this).hasClass('active') == false) {
-            $(this).parents("ul.dropdown-menu").find('a').removeClass('active');
-            $(this).addClass('active')
-        }
-        if ($(this).hasClass('ajax-link')) {
-            e.preventDefault();
-
-            if ($(this).hasClass('add-full')) {
-                $('#content').addClass('full-content');
-            }
-            else {
-                $('#content').removeClass('full-content');
-            }
-
-            var url = $(this).attr('href');
-
-            window.location.hash = url;
-
-            themeScripts.LoadAjaxContent(url);
-        }
-        if ($(this).attr('href') == '#') {
-            e.preventDefault();
-        }
-    });
-});

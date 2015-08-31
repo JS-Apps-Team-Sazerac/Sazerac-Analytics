@@ -1,8 +1,4 @@
 ﻿
-/// <reference path="../lib/$-2.1.4.js" />
-
-'use strict'
-
 import $ from 'jquery';
 
 //
