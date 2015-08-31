@@ -1,8 +1,8 @@
 function display(divElementID) {
-    function pieChart(inputData) {
+    function pieChart(dataType, inputData) {
         $(divElementID).kendoChart(
-            parse().pieChart(inputData) );
-    }
+            parse().pieChart(dataType, inputData));
+    };
 
     return {
         pieChart: pieChart

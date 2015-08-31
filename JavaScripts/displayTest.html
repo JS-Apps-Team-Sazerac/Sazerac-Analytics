@@ -10,7 +10,113 @@
     <script type="text/javascript" src="./parse.js"></script>
     <script type="text/javascript" src="./display.js"></script>
     <script>
-        display("#pie-chart").pieChart();
+        var dataObjectToParse = JSON.stringify({
+            "serverDayStart": "2015-08-31 00:00:00",
+            "browsers": {
+                "fromDateTime": "2015-08-29 00:00:00",
+                "toDateTime": "2016-08-30 00:00:00",
+                "Data": [
+                    [
+                        {
+                            "Name": "Internet Explorer",
+                            "Count": 10
+                        },
+                        {
+                            "Name": "Firefox",
+                            "Count": 54
+                        },
+                        {
+                            "Name": "Opera",
+                            "Count": 78
+                        }
+                    ],
+                    [
+                        {
+                            "Name": "Safari",
+                            "Count": 22
+                        },
+                        {
+                            "Name": "Chrome",
+                            "Count": 134
+                        },
+                        {
+                            "Name": "Internet Explorer",
+                            "Count": 12
+                        }
+                    ]
+                ]
+            },
+            "systems": {
+                "fromDateTime": "2015-08-29 00:00:00",
+                "toDateTime": "2016-08-30 00:00:00",
+                "Data": [
+                    [
+                        {
+                            "Name": "Windows XP",
+                            "Count": 10
+                        },
+                        {
+                            "Name": "Windows 8.1",
+                            "Count": 54
+                        },
+                        {
+                            "Name": "Windows 7",
+                            "Count": 78
+                        }
+                    ],
+                    [
+                        {
+                            "Name": "Windows 10",
+                            "Count": 22
+                        },
+                        {
+                            "Name": "Windows XP",
+                            "Count": 134
+                        },
+                        {
+                            "Name": "Windows 8",
+                            "Count": 1234
+                        }
+                    ]
+                ]
+            },
+            "countries": {
+                "fromDateTime": "2015-08-29 00:00:00",
+                "toDateTime": "2016-08-30 00:00:00",
+                "Data": [
+                    [
+                        {
+                            "Name": "Czech Republic",
+                            "Count": 10
+                        },
+                        {
+                            "Name": "United States Of America",
+                            "Count": 54
+                        },
+                        {
+                            "Name": "Venezuela",
+                            "Count": 78
+                        }
+                    ],
+                    [
+                        {
+                            "Name": "Bulgaria",
+                            "Count": 22
+                        },
+                        {
+                            "Name": "Russia",
+                            "Count": 134
+                        },
+                        {
+                            "Name": "Romania",
+                            "Count": 1234
+                        }
+                    ]
+                ]
+            }
+        })
+        display("#pie-chart").pieChart("browsers", JSON.parse(dataObjectToParse).browsers);
+        
     </script>
 </body>
 </html>
