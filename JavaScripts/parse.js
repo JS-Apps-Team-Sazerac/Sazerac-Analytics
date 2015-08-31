@@ -1,7 +1,8 @@
 function parse() {
-    function pieChart(title, inputData) {
+    function pieChart(title, inputData, theme) {
 
         var objData = {
+            theme: theme,
             title: {
                 text: title + ' data \r\n[from: ' + inputData.fromDateTime + '; to: ' + inputData.toDateTime + ']'
             },
@@ -14,8 +15,12 @@ function parse() {
                     format: "{0}%"
                 }
             },
+            //seriesColors: ["#03a9f4", "#ff9800", "#fad84a", "#4caf50"],
             series: [{
                 type: "pie",
+                overlay: {
+                    gradient: "roundedBevel"
+                },
                 data: []
             }]
         };
@@ -47,7 +52,7 @@ function parse() {
         //converting value(clicks) to value(%)
         var i, len;
         for (i = 0, len = objData.series[0].data.length; i < len; i++) {
-            objData.series[0].data[i].value = Math.floor((objData.series[0].data[i].value / dataSum) * 100);
+            objData.series[0].data[i].value = Math.round((objData.series[0].data[i].value / dataSum) * 100);
         }
 
         //sorting by value
@@ -87,8 +92,6 @@ function parse() {
 
         }
 
-        console.log(outputData.series);
-        console.log(objData.series);
         return objData;
     }
 
