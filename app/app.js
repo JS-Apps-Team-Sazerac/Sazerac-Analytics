@@ -14,6 +14,7 @@ db.query(["browser", "system", "country"], "2015-09-01 00:00:00", "2015-09-01 00
 	display.drawPieChart("#pie-chart-browsers","Browsers", response.browser);
 	display.drawPieChart("#pie-chart-systems","Systems", response.system);
 	display.drawPieChart("#pie-chart-countries","Countries", response.country);
+	display.drawBarChart("#bar-chart-countries","Countries", response.country);
 }, function(response) {
 	console.log("Error boy.");
 	console.log(response);
