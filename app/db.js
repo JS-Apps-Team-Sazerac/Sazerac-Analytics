@@ -16,7 +16,7 @@ function init(remoteApiUrl) {
 
 function query(dataToQuery, fromDateTime, toDateTime, bypassCache) {
 
-	var url, fromDateTimeConverted, toDateTimeConverted, cacheObj, cachedObjectsCollection = {},
+	var url, fromDateTimeConverted, toDateTimeConverted, cachedObj, cachedObjectsCollection = {},
 	 dataQueryParams = '&query=', isThereDataToRequest = false, queryingOnlyTodayStats, promise;
 
 	fromDateTimeConverted = new Date(fromDateTime);
@@ -74,7 +74,7 @@ function query(dataToQuery, fromDateTime, toDateTime, bypassCache) {
             		}
             	}
 
-          		console.log(data);
+          	//	console.log(data);
             	resolve(data);
             },
             error: function(err) {

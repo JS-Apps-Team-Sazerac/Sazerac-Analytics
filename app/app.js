@@ -9,8 +9,9 @@ _ext.init();
 display.init();
 db.init('http://avalkov.com/vsa/server/info.php?app=');
 
-db.query(["browser", "system", "country"], "2015-09-01 00:00:00", "2015-09-01 00:00:00")
+db.query(["browser", "system", "country"], "2015-09-01 00:00:00", "2015-09-01 00:00:00", false)
 .then(function(response) {
+	console.log(response);
 	display.drawPieChart("#pie-chart-browsers","Browsers", response.browser);
 	display.drawPieChart("#pie-chart-systems","Systems", response.system);
 	display.drawPieChart("#pie-chart-countries","Countries", response.country);
