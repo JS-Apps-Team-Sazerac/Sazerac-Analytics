@@ -48,7 +48,7 @@ function query(dataToQuery, fromDateTime, toDateTime, bypassCache) {
 
 	dataToQuery.forEach(function(name) {
 		if(typeof cachedObjectsCollection[name] === 'undefined') {
-			dataQueryParams += name + ':';
+			dataQueryParams += name + ',';
 		}
 	});
 
@@ -78,7 +78,7 @@ function query(dataToQuery, fromDateTime, toDateTime, bypassCache) {
             	resolve(data);
             },
             error: function(err) {
-              reject(JSON.parse(err.responseText));
+             reject(err.responseText);
             }
         });
     });
