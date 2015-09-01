@@ -1,4 +1,4 @@
-function preparePieChart(title, inputData, theme) {
+function preparePieChart(title, theme, inputData) {
     var outputData = {
         theme: theme,
         title: {
@@ -61,4 +61,80 @@ function preparePieChart(title, inputData, theme) {
     return outputData;
 }
 
-export default{ preparePieChart };
+function prepareBarChart(title, theme, inputData) {
+    var outputData = {
+        title: {
+            text: title
+        },
+        legend: {
+            position: "bottom"
+        },
+        seriesDefaults: {
+            type: "column",
+            stack: false
+        },
+        series: [],
+        valueAxis: {
+            line: {
+                visible: false
+            }
+        },
+        categoryAxis: {
+            categories: [],
+            majorGridLines: {
+                visible: false
+            }
+        },
+        tooltip: {
+            visible: true,
+            format: "{0}"
+        }
+    }
+    
+    var date = new Date(inputData.fromDateTime);
+    var names = [];
+    inputData.Data.forEach(function (dataObject,dataIndex) {
+        {
+            if (isNaN(date)) {
+                outputData.categoryAxis.categories.push('...');
+            }else {
+                date.setDate(date.getDate()+1);
+                outputData.categoryAxis.categories.push(date.toLocaleDateString());
+            }
+        }
+
+        var i, dataObjectLen;
+        for (i = 0, dataObjectLen = dataObject.length; i < dataObjectLen; i += 1) {
+            if (names.indexOf(dataObject[i].Name) < 0) {
+                names.push(dataObject[i].Name);
+            }
+        }
+    });
+    names = names.sort();
+    names.forEach(function (name) {
+        outputData.series.push({
+            name: name,
+            data: []
+        });
+    })
+
+    outputData.series.forEach(function (nameObj) {
+        inputData.Data.forEach(function (dataObject) {
+            var i, dataObjectLen, added = false;
+            for (i = 0, dataObjectLen = dataObject.length; i < dataObjectLen; i += 1) {
+                if (nameObj.name === dataObject[i].Name) {
+                    nameObj.data.push(dataObject[i].Count);
+                    added = true;
+                    break;
+                }
+            }
+            if (!added) {
+                nameObj.data.push(0);
+            }
+        });
+    })
+
+    return outputData;
+}
+
+export default{preparePieChart, prepareBarChart };

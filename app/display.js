@@ -1,24 +1,26 @@
-
 import $ from 'jquery';
 import kendo from 'kendo';
 import themeScripts from 'themeScripts';
 import parse from 'parse';
 
-function drawPieChart(divElementID, dataType, inputData) {
+function drawPieChart(divElementID, dataTitle, inputData) {
+    $(divElementID).kendoChart(parse.preparePieChart(dataTitle, "office365", inputData));
+};
 
-    $(divElementID).kendoChart(parse.preparePieChart(dataType, inputData, "office365"));
+function drawBarChart(divElementID, dataTitle, inputData) {
+    $(divElementID).kendoChart(parse.prepareBarChart(dataTitle, "office365", inputData));
 };
 
 function init() {
 
-	$(document).ready(function () {
-		displayTemplate();
-	});
+    $(document).ready(function () {
+        displayTemplate();
+    });
 }
 
 function displayTemplate() {
 
-	var template_url = location.hash.replace(/^#/, '');
+    var template_url = location.hash.replace(/^#/, '');
 
     if (template_url.length < 1) {
         template_url = 'templates/browsers.html';
@@ -28,8 +30,8 @@ function displayTemplate() {
         e.preventDefault();
         $('div#main').toggleClass('sidebar-show');
     });
-      
-    
+
+
     themeScripts.LoadAjaxContent(template_url);
     //themeScripts.LoadGoogleApi();
 
@@ -88,4 +90,4 @@ function displayTemplate() {
     });
 }
 
-export default{ init, drawPieChart };
+export default{ init, drawPieChart, drawBarChart};

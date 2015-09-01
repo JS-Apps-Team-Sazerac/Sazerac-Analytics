@@ -117,4 +117,5 @@ display.init();
 display.drawPieChart("#pie-chart-browsers","browsers", JSON.parse(dataObjectToParse).browsers);
 display.drawPieChart("#pie-chart-systems","Systems", JSON.parse(dataObjectToParse).systems);
 display.drawPieChart("#pie-chart-countries","Countries", JSON.parse(dataObjectToParse).countries);
+display.drawBarChart("#bar-chart-countries","Countries", JSON.parse(dataObjectToParse).countries);
 
