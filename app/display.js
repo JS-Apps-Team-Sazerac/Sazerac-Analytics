@@ -18,9 +18,15 @@ function updateTemplatesData(){
                     drawPieChart("#pie-chart-browsers","Browsers", response.browser);
                     drawPieChart("#pie-chart-systems","Systems", response.system);
                     drawPieChart("#pie-chart-countries","Countries", response.country);
+                    //drawPieChart("#pie-chart-referrers","Referrers", response.referrer);  // edit this
+                    //drawPieChart("#pie-chart-clicks","Clicks", response.click);
+
                     drawBarChart("#bar-chart-browsers","Browsers", response.browser);
                     drawBarChart("#bar-chart-systems","Systems", response.system);
                     drawBarChart("#bar-chart-countries","Countries", response.country);
+                    //drawBarChart("#bar-chart-referrers","Referrers", response.referrer); // edit this too !!!
+                    //drawBarChart("#bar-chart-clicks","Clicks", response.click);
+
                 }, function(response) {
                     console.log("Error boy.");
                     console.log(response);

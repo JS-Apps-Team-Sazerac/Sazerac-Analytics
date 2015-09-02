@@ -1,8 +1,9 @@
 function preparePieChart(title, theme, inputData) {
+    var titleAddon = _datesToDateObject(inputData.fromDateTime,inputData.toDateTime).titleAddon;
     var outputData = {
         theme: theme,
         title: {
-            text: title + ' data \r\n[from: ' + inputData.fromDateTime + '; to: ' + inputData.toDateTime + ']'
+            text: title + titleAddon
         },
         legend: {
             position: "bottom"
@@ -53,7 +54,6 @@ function preparePieChart(title, theme, inputData) {
         outputData.series[0].data[i].value = Math.round((outputData.series[0].data[i].value / dataSum) * 100);
     }
 
-    //sorting by value
     outputData.series[0].data.sort(function (firstDataEl, secondDataEl) {
         return secondDataEl.value - firstDataEl.value;
     })
@@ -62,9 +62,11 @@ function preparePieChart(title, theme, inputData) {
 }
 
 function prepareBarChart(title, theme, inputData) {
+    var titleAddon = _datesToDateObject(inputData.fromDateTime,inputData.toDateTime).titleAddon;
     var outputData = {
+        theme: theme,
         title: {
-            text: title
+            text: title + titleAddon
         },
         legend: {
             position: "bottom"
@@ -91,15 +93,16 @@ function prepareBarChart(title, theme, inputData) {
         }
     }
     
-    var date = new Date(inputData.fromDateTime);
+
+    var date = _datesToDateObject(inputData.fromDateTime,inputData.toDateTime).dateFrom;
     var names = [];
     inputData.Data.forEach(function (dataObject,dataIndex) {
         {
             if (isNaN(date)) {
-                outputData.categoryAxis.categories.push('...');
+                outputData.categoryAxis.categories.push('Day '+ (dataIndex + 1));
             }else {
-                date.setDate(date.getDate()+1);
                 outputData.categoryAxis.categories.push(date.toLocaleDateString());
+                date.setDate(date.getDate()+1);
             }
         }
 
@@ -135,6 +138,24 @@ function prepareBarChart(title, theme, inputData) {
     })
 
     return outputData;
+}
+
+function _datesToDateObject(dateFrom,dateTo){
+    var dates ={
+        from: new Date(dateFrom),
+        to: new Date(dateTo),
+    }
+    var titleAddon;
+    if (isNaN(dates.from)||isNaN(dates.to)) {
+        titleAddon = ' data\n' + dateFrom + ' - ' + dateTo;
+    }else {
+        titleAddon= ' data\n' + dates.from.toLocaleDateString() + ' - ' + dates.to.toLocaleDateString();
+    }
+    return {
+        titleAddon: titleAddon,
+        dateFrom: dates.from,
+        dateTo: dates.to
+    };
 }
 
 export default{preparePieChart, prepareBarChart };
