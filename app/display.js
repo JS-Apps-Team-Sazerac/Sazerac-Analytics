@@ -18,6 +18,9 @@ function updateTemplatesData(){
                     drawPieChart("#pie-chart-browsers","Browsers", response.browser);
                     drawPieChart("#pie-chart-systems","Systems", response.system);
                     drawPieChart("#pie-chart-countries","Countries", response.country);
+                    drawBarChart("#bar-chart-browsers","Browsers", response.browser);
+                    drawBarChart("#bar-chart-systems","Systems", response.system);
+                    drawBarChart("#bar-chart-countries","Countries", response.country);
                 }, function(response) {
                     console.log("Error boy.");
                     console.log(response);
