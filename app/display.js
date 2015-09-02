@@ -2,6 +2,7 @@ import $ from 'jquery';
 import kendo from 'kendo';
 import themeScripts from 'themeScripts';
 import parse from 'parse';
+import db from 'db';
 
 function drawPieChart(divElementID, dataTitle, inputData) {
     $(divElementID).kendoChart(parse.preparePieChart(dataTitle, "office365", inputData));
@@ -32,8 +33,7 @@ function displayTemplate() {
     });
 
 
-    themeScripts.LoadAjaxContent(template_url);
-    //themeScripts.LoadGoogleApi();
+    themeScripts.LoadAjaxContent(template_url);    
 
     $('.main-menu').on('click', 'a', function (e) {
         var parents = $(this).parents('li');
@@ -83,6 +83,21 @@ function displayTemplate() {
             window.location.hash = url;
 
             themeScripts.LoadAjaxContent(url);
+            
+            ////
+            ////  here put for templates
+            ////
+            db.query(["browser", "system", "country"], "2015-09-01 00:00:00", "2015-09-01 00:00:00")
+                .then(function(response) {
+                    drawPieChart("#pie-chart-browsers","Browsers", response.browser);
+                    drawPieChart("#pie-chart-systems","Systems", response.system);
+                    drawPieChart("#pie-chart-countries","Countries", response.country);
+                }, function(response) {
+                    console.log("Error boy.");
+                    console.log(response);
+                });
+                
+            ////
         }
         if ($(this).attr('href') == '#') {
             e.preventDefault();
