@@ -12,6 +12,18 @@ function drawBarChart(divElementID, dataTitle, inputData) {
     $(divElementID).kendoChart(parse.prepareBarChart(dataTitle, "office365", inputData));
 };
 
+function updateTemplatesData(){
+    db.query(["browser", "system", "country"], "2015-09-01 00:00:00", "2015-09-01 00:00:00")
+                .then(function(response) {
+                    drawPieChart("#pie-chart-browsers","Browsers", response.browser);
+                    drawPieChart("#pie-chart-systems","Systems", response.system);
+                    drawPieChart("#pie-chart-countries","Countries", response.country);
+                }, function(response) {
+                    console.log("Error boy.");
+                    console.log(response);
+                });
+}
+
 function init() {
 
     $(document).ready(function () {
@@ -33,7 +45,8 @@ function displayTemplate() {
     });
 
 
-    themeScripts.LoadAjaxContent(template_url);    
+    themeScripts.LoadAjaxContent(template_url);
+    updateTemplatesData();    
 
     $('.main-menu').on('click', 'a', function (e) {
         var parents = $(this).parents('li');
@@ -87,15 +100,7 @@ function displayTemplate() {
             ////
             ////  here put for templates
             ////
-            db.query(["browser", "system", "country"], "2015-09-01 00:00:00", "2015-09-01 00:00:00")
-                .then(function(response) {
-                    drawPieChart("#pie-chart-browsers","Browsers", response.browser);
-                    drawPieChart("#pie-chart-systems","Systems", response.system);
-                    drawPieChart("#pie-chart-countries","Countries", response.country);
-                }, function(response) {
-                    console.log("Error boy.");
-                    console.log(response);
-                });
+            updateTemplatesData();
                 
             ////
         }
