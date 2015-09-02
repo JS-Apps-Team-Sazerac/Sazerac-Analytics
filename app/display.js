@@ -41,8 +41,8 @@ function initKendoDatePicker(){
 function init() {
 
     $(document).ready(function () {
-        displayTemplate();
         initKendoDatePicker();
+        displayTemplate();        
     });
 }
 

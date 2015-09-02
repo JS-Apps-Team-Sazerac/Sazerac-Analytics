@@ -133,6 +133,14 @@ a.show-sidebar:hover {
   vertical-align: middle;
 }
 
+.nav.main-menu > li {
+    margin-left: 10px;
+}
+
+.nav.main-menu > li div {
+    padding-left: 15px;
+}
+
 .main-menu .dropdown-menu {
   position: absolute;
   z-index: 2001;
@@ -461,82 +469,6 @@ a.show-sidebar:hover {
   margin:0;
 }
 
-#dashboard-header {
-  margin-bottom:20px;
-}
-#dashboard_links {
-  padding: 0;
-}
-#dashboard_links .nav {
-  background:#3575A0;
-  -webkit-border-radius: 0 4px 4px 0;
-  -moz-border-radius: 0 4px 4px 0;
-  border-radius: 0 4px 4px 0;
-  overflow: hidden;
-}
-#dashboard_links .nav-stacked > li {
-  border-bottom: 1px solid rgba(0, 0, 0, 0.25);
-  border-top: 1px solid rgba(255, 255, 255, 0.12);
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 15px;
-  padding: 0;
-  margin: 0;
-}
-#dashboard_links .nav-pills > li > a {
-  color: #f8f8f8;
-  display: block;
-  padding: 20px 10px 20px 15px;
-  -webkit-border-radius: 0;
-  -moz-border-radius: 0;
-  border-radius: 0;
-  outline:none;
-}
-#dashboard_links .nav-pills > li.active {
-  border-top-color: rgba(0, 0, 0, 0.11);
-  position: relative;
-  margin: 0;
-}
-#dashboard_links .nav-pills > li.active > a, 
-#dashboard_links .nav-pills > li.active > a:hover, 
-#dashboard_links .nav-pills > li.active > a:focus, 
-#dashboard_links .nav > li > a:hover, 
-#dashboard_links .nav > li > a:focus {
-  background:rgba(0, 0, 0, 0.1);
-}
-#dashboard_links .nav-pills > li.active > a:before {
-  font-family: FontAwesome;
-  content: "\f0da";
-  position: absolute;
-  left: -2px;
-  font-size: 30px;
-  color: #f8f8f8;
-}
-#dashboard_tabs {
-  background:#f8f8f8;
-  -webkit-border-radius: 4px 0 0 4px;
-  -moz-border-radius: 4px 0 0 4px;
-  border-radius: 4px 0 0 4px;
-}
-#dashboard-overview {
-  padding-bottom:15px;
-}
-.sparkline-dashboard {
-  float: left;
-  margin-right: 10px;
-  text-align: center;
-}
-.sparkline-dashboard-info {
-  float: left;
-  display: block;
-  text-align: center;
-}
-.sparkline-dashboard-info span {
-  display: block;
-  font-weight: bold;
-  color: #b25050;
-}
-
 .preloader {
   position: absolute;
   width: 100%;
@@ -545,8 +477,6 @@ a.show-sidebar:hover {
   background: #ebebeb;
   z-index: 2000;
 }
-
-
 
 @media (min-width: 768px) {
   #sidebar-left.col-sm-2 {
