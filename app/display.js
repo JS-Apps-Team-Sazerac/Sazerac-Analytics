@@ -24,10 +24,16 @@ function updateTemplatesData(){
                 });
 }
 
+function initKendoDatePicker(){
+    $('#start-date').kendoDatePicker();
+    $('#end-date').kendoDatePicker();
+}
+
 function init() {
 
     $(document).ready(function () {
         displayTemplate();
+        initKendoDatePicker();
     });
 }
 
