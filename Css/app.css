@@ -133,11 +133,11 @@ a.show-sidebar:hover {
   vertical-align: middle;
 }
 
-.nav.main-menu > li {
+.nav.main-menu li {
     margin-left: 10px;
 }
 
-.nav.main-menu > li div {
+.nav.main-menu li div {
     padding-left: 15px;
 }
 
