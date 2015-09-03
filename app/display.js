@@ -19,24 +19,48 @@ function initKendoDatePicker(datePickerInputHandler) {
 
     var fromDate, toDate, format = { format: 'yyyy-MM-dd' }, hoursMinsSeconds = ' 00:00:00',
         startDatePickerId = '#start-date', endDatePickerId = '#end-date',
-        datePickerSubmitId = '#date-submit';
+        datePickerSubmitId = '#date-submit', formDatePickerId = '#date-picker';
 
     $(startDatePickerId).kendoDatePicker(format);
     $(endDatePickerId).kendoDatePicker(format);
+    
+    // validate startDate < endDate
+    var container = $(formDatePickerId);
+    kendo.init(container);
+    container.kendoValidator({
+        rules: {
+            greaterdate: function (input) {
+                if (input.is("[data-greaterdate-msg]") && input.val() != "") {                                    
+                    var date = kendo.parseDate(input.val()),
+                        otherDate = kendo.parseDate($("[name='" + input.data("greaterdateField") + "']").val());
+                    return otherDate == null || otherDate.getTime() < date.getTime();
+                }
+
+                return true;
+            }
+        }
+    });
+    
     $(datePickerSubmitId).on('click', function(e) {
+        
+        var validator = $(formDatePickerId).data("kendoValidator");
+
+        if (!validator.validate()) {
+            alert("Invalid date interval !");
+        }
 
         fromDate = $(startDatePickerId).val();
-        if(fromDate.length === 0) {
-            alert("Please select start date.");
-            return false;
-        }
+        // if(fromDate.length === 0) {
+        //     alert("Please select start date.");
+        //     return false;
+        // }
         fromDate += hoursMinsSeconds;
 
         toDate = $(endDatePickerId).val();
-        if(toDate.length === 0) {
-            alert("Please select end date.");
-            return false;
-        }
+        // if(toDate.length === 0) {
+        //     alert("Please select end date.");
+        //     return false;
+        // }
         toDate += hoursMinsSeconds;
 
         datePickerInputHandler(fromDate, toDate);

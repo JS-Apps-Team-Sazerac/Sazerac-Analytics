@@ -88,16 +88,18 @@
                     <li>
                         <br />
                         <strong>Date:</strong>
-                        <form id="date-picker" class="form-horizontal" role="form">
+                        <form id="date-picker" class="form-horizontal" data-role="validator" novalidate="novalidate">
                             <div class="form-group">
                                 <label for="start-date" class="control-label">Start</label>
-                                <input type="text" id="start-date" placeholder="Start date">
+                                <input type="text" id="start-date" name="start-date" data-role='datepicker' data-type="date" required="required" placeholder="Start date">
+                                <span data-for='start-date' class='k-invalid-msg'></span>
                             </div>
                             <div class="form-group">
                                 <label for="end-date" class="control-label">End</label>
-                                <input type="text" id="end-date" placeholder="End date">
+                                <input type="text" id="end-date" name="end-date" data-role='datepicker' data-type="date" required="required" data-greaterdate-field="start-date" data-greaterdate-msg='Sttart date should be after End date' placeholder="End date">
+                                <span data-for='end-date' class='k-invalid-msg'></span>
                             </div>
-                            <button type="submit" id="date-submit" class="btn btn-sm btn-primary btn-label-left">
+                            <button type="submit" id="date-interval-submit" data-role="button" class="btn btn-sm btn-primary btn-label-left">
                                 <span>
                                     <i class="fa fa-clock-o"></i>
                                 </span>
