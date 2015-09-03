@@ -42,6 +42,7 @@ function store(cacheName, cacheData, fromDateTime, toDateTime) {
 		cacheContainer = [];
 		cacheContainer.push(cacheData);
 		console.log('Storing new cache');
+		console.log(cacheContainer);
 		localStorage.setItem(prefixDataCache + cacheName, JSON.stringify(cacheContainer));
 	}
 }
@@ -63,7 +64,7 @@ function query(cacheName, fromDateTime, toDateTime) {
 			fromDateTimeCacheObjConverted = new Date(cacheObj.fromDateTime);
 			toDateTimeCacheObjConverted = new Date(cacheObj.toDateTime);
 
-			console.log(cacheObj);
+		//	console.log(cacheObj);
 			if(fromDateTimeCacheObjConverted <= fromDateTime && toDateTime <= toDateTimeCacheObjConverted) {
 
 				while(fromDateTimeCacheObjConverted < fromDateTime) {
@@ -75,7 +76,7 @@ function query(cacheName, fromDateTime, toDateTime) {
 					cacheObj.Data.shift();
 					toDateTimeCacheObjConverted.setDate(toDateTimeCacheObjConverted.getDate() - 1);
 				} 
-
+				
 				data = cacheObj;
 				//data = {}
 				//data[cacheName] = cacheObj;

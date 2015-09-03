@@ -97,7 +97,7 @@
                                 <label for="end-date" class="control-label">End</label>
                                 <input type="text" id="end-date" placeholder="End date">
                             </div>
-                            <button type="submit" class="btn btn-sm btn-primary btn-label-left">
+                            <button type="submit" id="date-submit" class="btn btn-sm btn-primary btn-label-left">
                                 <span>
                                     <i class="fa fa-clock-o"></i>
                                 </span>
@@ -162,6 +162,7 @@
                 jquery: './../Lib/jquery-2.1.4.js',
                 kendo: './../Lib/kendo.all.min.js',
                 underscore: './../Lib/underscore-1.8.3.js',
+                heatmap: './../Lib/heatmap.js',
                 themeScripts: ('./themeScripts.js?v=' + Math.random()),
                 db: ('./db.js?v=' + Math.random()),
                 cache: ('./cache.js?v=' + Math.random()),
@@ -171,7 +172,7 @@
             }
         });
 
-        System.import('app/app.js');
+        System.import(('app/app.js?v=' + Math.random()));
     </script>
 </body>
 </html>
