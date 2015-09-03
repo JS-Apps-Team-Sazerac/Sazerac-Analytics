@@ -17,7 +17,7 @@ Sazerac Analytics is a project that aims to bring the future to web application 
 * _Boray - Borislav Georgiev_
 * _Obelixx - Alexander Angelov_
 * _Beardhammer - Martin Ali_
-* _SHAMMY - Hisham Ibrahim(Didn't participate)_
+* _SHAMMY - Hisham Ibrahim_
 
 ### GitHub Repository URL
 [Sazerac Analytics](https://github.com/JS-Apps-Team-Sazerac/Sazerac-Analytics)
