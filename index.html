@@ -11,11 +11,14 @@
     <link rel="stylesheet" href="Css/KendoUI/kendo.common.min.css" />
     <link rel="stylesheet" href="Css/KendoUI/kendo.default.min.css" />
     <link rel="stylesheet" href="Css/KendoUI/kendo.office365.min.css" />
+    
+    <link href="css/sweetalert.css" rel="stylesheet" />
 
     <link href="Css/app.css" rel="stylesheet" />
 
     <script src="Lib/system.js"></script>
     <script src="Lib/facebook.js"></script>
+    <script src="lib/sweetalert.min.js"></script>
 </head>
 <body>
     <!--Start Header-->
@@ -96,7 +99,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="end-date" class="control-label">End</label>
-                                <input type="text" id="end-date" name="end-date" data-role='datepicker' data-type="date" required="required" data-greaterdate-field="start-date" data-greaterdate-msg='Sttart date should be after End date' placeholder="End date">
+                                <input type="text" id="end-date" name="end-date" data-role='datepicker' data-type="date" required="required" data-greaterdate-field="start-date" data-greaterdate-msg='Sttart date should be before End date' placeholder="End date">
                                 <span data-for='end-date' class='k-invalid-msg'></span>
                             </div>
                             <button type="submit" id="date-interval-submit" data-role="button" class="btn btn-sm btn-primary btn-label-left">

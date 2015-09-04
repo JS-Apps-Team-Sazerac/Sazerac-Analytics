@@ -19,24 +19,54 @@ function initKendoDatePicker(datePickerInputCallback) {
 
     var fromDate, toDate, format = { format: 'yyyy-MM-dd' }, hoursMinsSeconds = ' 00:00:00',
     startDatePickerId = '#start-date', endDatePickerId = '#end-date',
-    datePickerSubmitId = '#date-submit';
+    datePickerSubmitId = '#date-interval-submit', formDatePickerId = '#date-picker';
 
     $(startDatePickerId).kendoDatePicker(format);
     $(endDatePickerId).kendoDatePicker(format);
+    
+    var container = $(formDatePickerId);
+
+    kendo.init(container);
+    container.kendoValidator({
+        rules: {
+            greaterdate: function (input) {
+                if (input.is("[data-greaterdate-msg]") && input.val() != "") {                                    
+                    var date = kendo.parseDate(input.val()),
+                        otherDate = kendo.parseDate($("[name='" + input.data("greaterdateField") + "']").val());
+                    return otherDate == null || otherDate.getTime() < date.getTime();
+                }
+
+                return true;
+            }
+        }
+    });
+    
     $(datePickerSubmitId).on('click', function(e) {
+        
+        e.preventDefault();
+
+        var validator = $(formDatePickerId).data("kendoValidator");
+
+        if (!validator.validate()) {
+            swal("Invalid date interval !");
+        }
 
         fromDate = $(startDatePickerId).val();
+        
         if(fromDate.length === 0) {
-            alert("Please select start date.");
+           
             return false;
         }
+        
         fromDate += hoursMinsSeconds;
 
         toDate = $(endDatePickerId).val();
+        
         if(toDate.length === 0) {
-            alert("Please select end date.");
+           
             return false;
         }
+        
         toDate += hoursMinsSeconds;
 
         datePickerInputCallback(fromDate, toDate);
