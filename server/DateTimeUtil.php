@@ -18,6 +18,22 @@ class DateTimeUtil implements IDateTimeUtil
 		return date('Y-m-d H:i:s', $this->timeNow - ($hours * 3600)); 
 	}
 	
+	function timeAddHours($time, $hours) {
+		return date('Y-m-d H:i:s', $this->timeNow + ($hours * 3600)); 
+	}
+	
+	function timestampToDateTime($timestamp) {
+		return date('Y-m-d H:i:s', $timestamp);
+	}
+	
+	function timestampToEndDateTime($timestamp) {
+		return str_replace(date('H:i:s', $timestamp), '23:59:59', date('Y-m-d H:i:s', $timestamp));
+	}
+	
+	function timestampAddHours($timestamp, $hours) {
+		return $timestamp + ($hours * 3600);
+	}
+	
 	function getDayStart() {
 		return $this->replaceDateTimeHoursMinSeconds('00:00:00');
 	}

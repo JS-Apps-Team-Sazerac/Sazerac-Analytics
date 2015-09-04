@@ -1,13 +1,9 @@
 <?php
 
-/*
-function get64BitHash($str) {
-	return gmp_strval(gmp_init(substr(md5($str), 0, 16), 16), 10);
-}
-*/
-
-if(isset($_GET["app"]) && !empty($_GET["query"]) && !empty($_GET["from"]) && !empty($_GET["to"])) {
+if(isset($_GET["app"]) && isset($_GET["query"]) && isset($_GET["from"]) && isset($_GET["to"])) {
 	
+	header('Access-Control-Allow-Origin: *');
+	header('Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept');
 	header('Content-Type: application/json');
 	
 	include_once "config.php";
@@ -19,36 +15,67 @@ if(isset($_GET["app"]) && !empty($_GET["query"]) && !empty($_GET["from"]) && !em
 	$from = $_GET["from"];
 	$to = $_GET["to"];
 	$outputCollection = "";
+	$isQueryForClicks = false;
 	
 	$dateTimeUtil = new DateTimeUtil($timeNow);
 	$mysqlConnector = new MysqlConnector($mysqlHost, $mysqlUser, $mysqlPw, $mysqlDbName);
 	$statisticsMysqlReadController = new StatisticsMysqlReadController($mysqlDbName, $mysqlConnector->link, $dateTimeUtil);
 	
-	if(strpos($clientQuery, "browsers") !== false) {
+	$statisticStart = $statisticsMysqlReadController->queryConfig("StatisticStart", "DateTimeValue");
+	
+	if(empty($clientQuery)) {
 		
-		$outputCollection["Browsers"] = $statisticsMysqlReadController->queryBrowsers($from, $to);	
-	}
-	
-	if(strpos($clientQuery, "visits") !== false) {
-	
-		$outputCollection["Visits"] = $statisticsMysqlReadController->queryVisits($from, $to);
-	}
-	
-	if(strpos($clientQuery, "systems") !== false) {
+		$outputCollection = array();
+		$outputCollection["statisticStart"] = $statisticStart;
+		$outputCollection["serverDayStart"] = $dateTimeUtil->getDayStart();
 		
-		$outputCollection["Systems"] = $statisticsMysqlReadController->querySystems($from, $to);
+		$JsonPrettyPrint = 128;
+		echo json_encode($outputCollection, $JsonPrettyPrint);
+		exit;
 	}
 	
-	if(strpos($clientQuery, "referrers") !== false) {
+	if(strtotime($from) < strtotime($statisticStart)) {
+		
+		$from = $statisticStart;
+	}
 	
-		$outputCollection["Referrers"] = $statisticsMysqlReadController->queryReferrers($from, $to);
+	if(strtotime($to) > strtotime($dateTimeUtil->getDayStart())) {
+		
+		$to = $dateTimeUtil->getDayStart();
 	}
 
-	if(strpos($clientQuery, "countries") !== false) {
-	
-		$outputCollection["Countries"] = $statisticsMysqlReadController->queryCountries($from, $to);
+	$queryColumns = null;
+	if(!empty($_GET["query"])) {
+		$queryColumns = explode(",", $_GET["query"]);
+		for($i = 0; $i < count($queryColumns); $i++) {
+			if(empty($queryColumns[$i])) {
+				unset($queryColumns[$i]);
+			} else {
+				if($queryColumns[$i] == "click") { 
+					$isQueryForClicks = true;
+				}
+			}
+		}
 	}
 	
+	$filterColumnsAndValues = null;
+	if(!empty($_GET["filter"])) {
+		$filterColumnsAndValues = explode(",", $_GET["filter"]);
+		for($i = 0; $i < count($filterColumnsAndValues); $i++) {
+			if(empty($filterColumnsAndValues[$i])) {
+				unset($filterColumnsAndValues[$i]);
+			}
+		}
+	}
+	
+	if($isQueryForClicks == true) {
+		$outputCollection = $statisticsMysqlReadController->queryClicks(array("Path", "X", "Y"), $from, $to);
+	} else {
+		$outputCollection = $statisticsMysqlReadController->queryStats($queryColumns, $filterColumnsAndValues, $from, $to);
+	}
+	
+	$outputCollection["statisticStart"] = $statisticStart;
+	$outputCollection["serverDayStart"] = $dateTimeUtil->getDayStart();
 	
 	$jsonCallback = "";
 	if(!empty($_GET["jsonCallback"])) {
@@ -64,7 +91,8 @@ if(isset($_GET["app"]) && !empty($_GET["query"]) && !empty($_GET["from"]) && !em
 		echo $jsonCallback . "(";
 	}
 	
-	echo json_encode($outputCollection, JSON_PRETTY_PRINT);
+	$JsonPrettyPrint = 128;
+	echo json_encode($outputCollection, $JsonPrettyPrint);
 	
 	if(!empty($jsonCallback)) {
 		echo ");";

@@ -14,67 +14,114 @@ class StatisticsMysqlReadController
 		$this->link = $link;
 	}
 	
-	function queryVisits($fromDate, $toDate) {
+	function queryConfig($configName, $configColumn) {
 		
-		return $this->queryCountStat("visits", "VisitType", $fromDate, $toDate);
-	}
-	
-	function queryCountries($fromDate, $toDate) {
-		
-		$countriesCollection = $this->queryCountStat("countries", "Country", $fromDate, $toDate);
-		$i = 0;
-		foreach($countriesCollection as $key => $value) {
-			if($key == "length") {
-				continue;
-			}
-			$countriesCollectionIndexed[$i] = array($key => $value);
-			$i++;
-		}
-		
-		return $countriesCollectionIndexed;
-	}
-	
-	function queryBrowsers($fromDate, $toDate) {
-		
-		return $this->queryCountStat("browsers", "BrowserName", $fromDate, $toDate);
-	}
-	
-	function querySystems($fromDate, $toDate) {
-	
-		return $this->queryCountStat("systems", "OSName", $fromDate, $toDate);
-	}
-	
-	function queryReferrers($fromDate, $toDate) {
-		
-		$referrersCollection = $this->queryCountStat("referrers", "Referrer", $fromDate, $toDate);
-		$i = 0;
-		foreach($referrersCollection as $key => $value) {
-			if($key == "length") {
-				continue;
-			}
-			$referrersCollectionIndexed[$i] = array($key => $value);
-			$i++;
-		}
-		
-		return $referrersCollectionIndexed;
-	}
-	
-	private function queryCountStat($queryTableName, $queryColumnName, $fromDate, $toDate) {
-		
-		$query = $this->link->prepare("SELECT `$queryColumnName`,`Count` FROM `$this->mysqlDbName`.`$queryTableName` WHERE `StatDay` BETWEEN ? AND ?");
-		$query->bind_param('ss', $fromDate, $toDate);
+		$statement = 'SELECT `' . $configColumn . '` FROM `' . $this->mysqlDbName . "`.`config` WHERE `Name` = ? LIMIT 1";
+
+		$query = $this->link->prepare($statement);
+		$query->bind_param('s', $configName);
 		$query->execute();
-		$query->bind_result($valueName, $value);
+		$query->bind_result($value);
+		$query->fetch();
 		
-		$collection = array("length" => 0);
-		while($query->fetch()) {
-			$collection[$valueName] = $value;
-			$collection["length"]++;
+		return $value;
+	}
+	
+	function queryStats($queryColumns, $filterColumnsAndValues, $fromDate, $toDate) {
+		
+		$outputCollection = array();
+
+		for($i = 0; $i < count($queryColumns) && !empty($queryColumns); $i++) {
+		
+			$queriedDay = strtotime($fromDate);
+			
+			$dataIndex = 0;
+			$collection = array( "fromDateTime" => $fromDate, "toDateTime" => $toDate);
+			$collection["Data"] = array();
+			
+			while($queriedDay <= strtotime($toDate)) {
+
+				$initialStatement = 'SELECT ' ;
+				$initialStatement .= '`' . $queryColumns[$i] . '`, COUNT(`' . $queryColumns[$i] . '`)';
+			
+				$initialStatement .= ' FROM `' . $this->mysqlDbName . '`.`visitors` WHERE `LastVisit` BETWEEN ? AND ?';
+				
+				for($x = 0; $x < count($filterColumnsAndValues) && !empty($filterColumnsAndValues[$x]); $x++) {
+					$filterColumnAndValue = explode(":", $filterColumnsAndValues[$x]);
+					$initialStatement .= ' AND `' . $filterColumnAndValue[0] . "` = '" . $filterColumnAndValue[1] . "'"; 
+				}
+				
+				$initialStatement .= " GROUP BY `" . $queryColumns[$i] . "`";
+
+				$query = $this->link->prepare($initialStatement);
+				$query->bind_param('ss', $this->dateTimeUtil->timestampToDateTime($queriedDay), $this->dateTimeUtil->timestampToEndDateTime($queriedDay));
+				$query->execute();
+				$query->bind_result($valueName, $value);
+				
+				$collection["Data"][$dataIndex] = array();
+				$z = 0;
+				
+				while($query->fetch()) {
+					$collection["Data"][$dataIndex][$z] = array( "Name" => $valueName, "Count" => $value);
+					$z++;
+				}
+				
+				if(empty($collection["Data"][$dataIndex])) {
+					unset($collection["Data"][$dataIndex]);
+				}
+				
+				$dataIndex++;
+				
+				$query->close();
+				
+				$queriedDay = $this->dateTimeUtil->timestampAddHours($queriedDay, 24);
+			}
+			
+			if(!empty($collection["Data"])) {
+				$outputCollection[$queryColumns[$i]] = $collection;
+			}		
+		}
+		
+		return $outputCollection;
+	}
+	
+	function queryClicks($queryColumns, $fromDate, $toDate) {
+	
+		$outputCollection = array();
+		
+		$initialStatement = 'SELECT';
+		for($i = 0; $i < count($queryColumns); $i++) {
+			$initialStatement .= ' `' . $queryColumns[$i] . '`';
+			if($i + 1 < count($queryColumns)) {
+				$initialStatement .= ',';
+			}
+		}
+		
+		$initialStatement .= ' FROM `' . $this->mysqlDbName . '`.`clicks` WHERE `ClickTime` BETWEEN ? AND ?';
+		
+		$query = $this->link->prepare($initialStatement);
+		$query->bind_param('ss', $this->dateTimeUtil->timestampToDateTime(strtotime($fromDate)), $this->dateTimeUtil->timestampToEndDateTime(strtotime($toDate)));
+		$query->execute();
+		$query->bind_result($path, $x, $y);
+		$query->store_result();
+		
+		if($query->num_rows > 0) {
+		
+			$collection = array( "fromDateTime" => $fromDate, "toDateTime" => $toDate);
+			$collection["Data"] = array();
+			
+			$i = 0;
+			while($query->fetch()) {
+				$collection["Data"][$i] = array( "path" => $path, "x" => $x, "y" => $y);
+				$i++;
+			}
+			
+			$outputCollection['click'] = $collection;
 		}
 		
 		$query->close();
 		
-		return $collection;
+		return $outputCollection;
 	}
 }
 

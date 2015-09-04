@@ -17,12 +17,13 @@ class VisitorMysqlController
 		$this->link = $link;
 	}
 
-	function isExistingVisitor($visitorInfo) {
+	function isTodayVisitor($visitorInfo) {
 	
 		$uid = $visitorInfo["UID"];
+		$visitorTimeDelta = $this->dateTimeUtil->getTimeNowSubstractHours(24);
 		
-		$query = $this->link->prepare("SELECT * FROM `$this->mysqlDbName`.`visitors` WHERE `UID` = ?");
-		$query->bind_param('s', $uid);
+		$query = $this->link->prepare("SELECT * FROM `$this->mysqlDbName`.`visitors` WHERE `UID` = ? AND `LastVisit` >= ?");
+		$query->bind_param('ss', $uid, $visitorTimeDelta);
 		$query->execute();
 		$query->store_result();
 
@@ -35,45 +36,31 @@ class VisitorMysqlController
 		
 		return $isExisting;
 	}
+		
+	function updateVisitor($visitorInfo) {
 	
-	function isUniqueVisitor($visitorInfo) {
-		
-		$uid = $visitorInfo["UID"];
-		$visitorTimeDelta = $this->dateTimeUtil->getTimeNowSubstractHours(24);
-		
-		$query = $this->link->prepare("SELECT `LastVisit` FROM `$this->mysqlDbName`.`visitors` WHERE `UID` = ?");
-		$query->bind_param('s', $uid);
-		$query->execute();
-		$query->bind_result($lastVisit);
-		$query->fetch();
-		$query->close();
-		
-		$isUnique = false;
-		if($this->dateTimeUtil->compareDateTime($lastVisit, $visitorTimeDelta) == 1) {
-			$isUnique = true;
-		}
-		
-		return $isUnique;
+		$update = $this->link->prepare("UPDATE `visitors` SET `PageViews` = PageViews + 1  WHERE `UID` = ? AND `LastVisit` >= ?");
+		$update->bind_param('ss', $visitorInfo["UID"], $this->dateTimeUtil->getTimeNowSubstractHours(24));
+		$update->execute();
+		$update->close();
 	}
-	
+
 	function addVisitor($visitorInfo) {
+
+		$defaultPageViews = 1;
 		
-		$uid = $visitorInfo["UID"];
-		
-		$insert = $this->link->prepare("INSERT INTO `$this->mysqlDbName`.`visitors` (`UID`, `LastVisit`) VALUES(?, ?)");
-		$insert->bind_param('ss', $uid, $this->timeNow);
+		$insert = $this->link->prepare("INSERT INTO `$this->mysqlDbName`.`visitors` (`UID`, `country`, `referrer`, `browser`, `system`, `PageViews`, `LastVisit`) VALUES(?, ?, ?, ?, ?, ?, ?)");
+		$insert->bind_param('sssssds', $visitorInfo["UID"], $visitorInfo["Country"], $visitorInfo["Referrer"], $visitorInfo["BrowserName"], $visitorInfo["OSName"], $defaultPageViews, $this->timeNow);
 		$insert->execute();
 		$insert->close();
 	}
 	
-	function updateVisitor($visitorInfo) {
-	
-		$uid = $visitorInfo["UID"];
+	function addClick($clickInfo) {
 		
-		$update = $this->link->prepare("UPDATE `visitors` SET `LastVisit` = ? WHERE `UID` = ?");
-		$update->bind_param('ss', $this->timeNow, $uid);
-		$update->execute();
-		$update->close();
+		$insert = $this->link->prepare("INSERT INTO `$this->mysqlDbName`.`clicks` (`UID`, `Path`, `X`, `Y`, `ClickTime`) VALUES(?, ?, ?, ?, ?)");
+		$insert->bind_param('sssss', $clickInfo["UID"], $clickInfo["Path"], $clickInfo["X"], $clickInfo["Y"], $this->timeNow);
+		$insert->execute();
+		$insert->close();
 	}
 }
 ?>
