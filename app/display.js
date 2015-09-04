@@ -6,64 +6,40 @@ import parse from 'parse';
 
 var currentDataToDisplay;
 
-function init(dataToDisplay, datePickerInputHandler, error) {
+function init(dataToDisplay, menuInputCallback, datePickerInputCallback, error) {
 
     $(document).ready(function () {
         currentDataToDisplay = dataToDisplay;
-        displayTemplate(error);
-        initKendoDatePicker(datePickerInputHandler);
+        displayTemplate(menuInputCallback, error);
+        initKendoDatePicker(datePickerInputCallback);
     });
 }
 
-function initKendoDatePicker(datePickerInputHandler) {
+function initKendoDatePicker(datePickerInputCallback) {
 
     var fromDate, toDate, format = { format: 'yyyy-MM-dd' }, hoursMinsSeconds = ' 00:00:00',
-        startDatePickerId = '#start-date', endDatePickerId = '#end-date',
-        datePickerSubmitId = '#date-submit', formDatePickerId = '#date-picker';
+    startDatePickerId = '#start-date', endDatePickerId = '#end-date',
+    datePickerSubmitId = '#date-submit';
 
     $(startDatePickerId).kendoDatePicker(format);
     $(endDatePickerId).kendoDatePicker(format);
-    
-    // validate startDate < endDate
-    var container = $(formDatePickerId);
-    kendo.init(container);
-    container.kendoValidator({
-        rules: {
-            greaterdate: function (input) {
-                if (input.is("[data-greaterdate-msg]") && input.val() != "") {                                    
-                    var date = kendo.parseDate(input.val()),
-                        otherDate = kendo.parseDate($("[name='" + input.data("greaterdateField") + "']").val());
-                    return otherDate == null || otherDate.getTime() < date.getTime();
-                }
-
-                return true;
-            }
-        }
-    });
-    
     $(datePickerSubmitId).on('click', function(e) {
-        
-        var validator = $(formDatePickerId).data("kendoValidator");
-
-        if (!validator.validate()) {
-            alert("Invalid date interval !");
-        }
 
         fromDate = $(startDatePickerId).val();
-        // if(fromDate.length === 0) {
-        //     alert("Please select start date.");
-        //     return false;
-        // }
+        if(fromDate.length === 0) {
+            alert("Please select start date.");
+            return false;
+        }
         fromDate += hoursMinsSeconds;
 
         toDate = $(endDatePickerId).val();
-        // if(toDate.length === 0) {
-        //     alert("Please select end date.");
-        //     return false;
-        // }
+        if(toDate.length === 0) {
+            alert("Please select end date.");
+            return false;
+        }
         toDate += hoursMinsSeconds;
 
-        datePickerInputHandler(fromDate, toDate);
+        datePickerInputCallback(fromDate, toDate);
 
         e.preventDefault();
     });
@@ -97,7 +73,9 @@ function displayClicksTemplate(clicksData) {
     var heatmapConfig, heatmapPreparedData, heatmapDataPoint, heatmapView,
     heatmapFrame, clicksData, clickX, clickY;
     
+
     heatmapFrame = $('#heatmapFrame');
+
     
     heatmapConfig = {
         container: document.getElementById('heatmapArea'),
@@ -140,7 +118,7 @@ function displayClicksTemplate(clicksData) {
     heatmapView.setData(heatmapPreparedData);
 }
 
-function displayTemplate(error) {
+function displayTemplate(menuInputCallback, error) {
 
     var template_url;
 
@@ -165,8 +143,10 @@ function displayTemplate(error) {
 
     themeScripts.LoadAjaxContent(template_url);
 
-    if(typeof currentDataToDisplay !== 'undefined') {
-        updateTemplatesData(currentDataToDisplay);  
+    if(menuInputCallback(template_url) == true) {
+        if(typeof currentDataToDisplay !== 'undefined') {
+            updateTemplatesData(currentDataToDisplay);  
+        }
     }
 
     $('.main-menu').on('click', 'a', function (e) {
@@ -217,7 +197,9 @@ function displayTemplate(error) {
                 window.location.hash = url;
                 themeScripts.LoadAjaxContent(url);
 
-                updateTemplatesData(currentDataToDisplay);
+                if(menuInputCallback(url) == true) {
+                    updateTemplatesData(currentDataToDisplay);
+                }
             }
         }
 

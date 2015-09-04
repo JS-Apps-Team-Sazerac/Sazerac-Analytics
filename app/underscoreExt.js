@@ -34,7 +34,7 @@ _.mixin({
 		if(typeof firstResponse[name] === 'undefined' || typeof secondResponse[name] === 'undefined') {
 	
 			newerResponse = firstResponse[name] || secondResponse[name];
-			mergedResponse[name].Data = mergeResponsesData(newerResponse.Data);
+			mergedResponse[name].Data = _.mergeResponsesData(newerResponse.Data);
 			mergedResponse[name].fromDateTime = newerResponse[name].fromDateTime;
 			mergedResponse[name].toDateTime = newerResponse[name].toDateTime;
 	
@@ -51,8 +51,8 @@ _.mixin({
 			} else {
 	
 			newerResponse = secondResponse;
-			olderResponse = firstResponse;
-			}
+		  olderResponse = firstResponse;
+		  }
 	
 			mergedResponse[name].Data = _.mergeResponsesData(newerResponse[name].Data, olderResponse[name].Data);
 			mergedResponse[name].fromDateTime = olderResponse[name].fromDateTime;

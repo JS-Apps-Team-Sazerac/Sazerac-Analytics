@@ -28,7 +28,7 @@ function query(dataToQuery, fromDateTime, toDateTime, bypassCache) {
 		});
 	}
 
-	if(bypassCache == false && typeof cachedObjectsCollection !== 'undefined') {
+	if(bypassCache == false && $.isEmptyObject(cachedObjectsCollection) == false) {
 
 		return new Promise(function(resolve, reject) {
 			console.log("We got all info from cache - no request.");
@@ -39,7 +39,6 @@ function query(dataToQuery, fromDateTime, toDateTime, bypassCache) {
 	} else {
 
 		dataToQuery.forEach(function(name) {
-
 			dataQueryParams += name + ',';
 		});
 	}
