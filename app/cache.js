@@ -77,7 +77,10 @@ function query(cacheName, fromDateTime, toDateTime) {
 				while(toDateTimeCacheObjConverted > toDateTime) {
 					cacheObj.Data.shift();
 					toDateTimeCacheObjConverted.setDate(toDateTimeCacheObjConverted.getDate() - 1);
-				} 
+				}
+
+				cacheObj.fromDateTime = _.dateObjToFormattedString(fromDateTimeCacheObjConverted);
+				cacheObj.toDateTime = _.dateObjToFormattedString(toDateTimeCacheObjConverted);
 				
 				data = cacheObj;
 			} 

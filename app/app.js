@@ -37,9 +37,12 @@ import display from 'display';
 		datePickerStart = fromDate;
 		datePickerEnd = toDate;
 
-		if(fromDateConverted < serverDayStartConverted && toDateConverted >= serverDayStartConverted) {
-
-			toDateConverted.setDate(toDateConverted.getDate() - 1);
+		console.log(fromDateConverted + ' ' + toDateConverted);
+		console.log(serverDayStartConverted);
+		if(fromDateConverted < serverDayStartConverted && toDateConverted <= serverDayStartConverted) {
+			if(toDateConverted == serverDayStartConverted) {
+				toDateConverted.setDate(toDateConverted.getDate() - 1);
+			}
 
 			promises.push(db.query(generalQueryDataNames, fromDate, _.dateObjToFormattedString(toDateConverted), false));
 
