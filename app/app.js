@@ -27,18 +27,20 @@ import display from 'display';
 		var fromDateConverted, toDateConverted, queryFromCacheAndServer, queryFromServer, promises = [];
 
 		fromDateConverted = new Date(fromDate);
-		toDateConverted = new Date(toDate);		
+		toDateConverted = new Date(toDate);
+
+		if(toDateConverted < fromDateConverted) {
+			alert("Start date cant be greater than end date.");
+			return;
+		}
 
 		datePickerStart = fromDate;
 		datePickerEnd = toDate;
 
-		console.log(fromDateConverted + ' ' + toDateConverted);
-		console.log(serverDayStartConverted);
-		
 		if(fromDateConverted < serverDayStartConverted && toDateConverted <= serverDayStartConverted) {
-			if(toDateConverted == serverDayStartConverted) {
+			//if(toDateConverted == serverDayStartConverted) {
 				toDateConverted.setDate(toDateConverted.getDate() - 1);
-			}
+			//}
 
 			promises.push(db.query(generalQueryDataNames, fromDate, _.dateObjToFormattedString(toDateConverted), false));
 

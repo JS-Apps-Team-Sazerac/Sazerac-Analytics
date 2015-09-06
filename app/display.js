@@ -19,54 +19,24 @@ function initKendoDatePicker(datePickerInputCallback) {
 
     var fromDate, toDate, format = { format: 'yyyy-MM-dd' }, hoursMinsSeconds = ' 00:00:00',
     startDatePickerId = '#start-date', endDatePickerId = '#end-date',
-    datePickerSubmitId = '#date-interval-submit', formDatePickerId = '#date-picker';
+    datePickerSubmitId = '#date-submit';
 
     $(startDatePickerId).kendoDatePicker(format);
     $(endDatePickerId).kendoDatePicker(format);
-    
-    var container = $(formDatePickerId);
-
-    kendo.init(container);
-    container.kendoValidator({
-        rules: {
-            greaterdate: function (input) {
-                if (input.is("[data-greaterdate-msg]") && input.val() != "") {                                    
-                    var date = kendo.parseDate(input.val()),
-                        otherDate = kendo.parseDate($("[name='" + input.data("greaterdateField") + "']").val());
-                    return otherDate == null || otherDate.getTime() < date.getTime();
-                }
-
-                return true;
-            }
-        }
-    });
-    
     $(datePickerSubmitId).on('click', function(e) {
-        
-        e.preventDefault();
-
-        var validator = $(formDatePickerId).data("kendoValidator");
-
-        if (!validator.validate()) {
-            swal("Invalid date interval !");
-        }
 
         fromDate = $(startDatePickerId).val();
-        
         if(fromDate.length === 0) {
-           
+            alert("Please select start date.");
             return false;
         }
-        
         fromDate += hoursMinsSeconds;
 
         toDate = $(endDatePickerId).val();
-        
         if(toDate.length === 0) {
-           
+            alert("Please select end date.");
             return false;
         }
-        
         toDate += hoursMinsSeconds;
 
         datePickerInputCallback(fromDate, toDate);
@@ -98,54 +68,64 @@ function updateTemplatesData(data) {
     drawBarChart("#bar-chart-referrers","Referrers", data.referrer);
 }
 
+
 function displayClicksTemplate(clicksData) {
 
     var heatmapConfig, heatmapPreparedData, heatmapDataPoint, heatmapView,
-    heatmapFrame, clicksData, clickX, clickY;
+    heatmapFrame, clicksData, clickX, clickY, timerId;
     
 
     heatmapFrame = $('#heatmapFrame');
 
-    
-    heatmapConfig = {
-        container: document.getElementById('heatmapArea'),
-        radius: 10,
-        maxOpacity: .5,
-        minOpacity: 0,
-        blur: .75
-    };
-    
-    heatmapView = heatmap.create(heatmapConfig);
-    
-    heatmapPreparedData = {
-        max: 1,
-        min: 0,
-        data: []
-    };
-    
-    clicksData.forEach(function(clickData) {
-    
-		clickX = parseFloat(clickData.x) / 100;
-		clickY = parseFloat(clickData.y) / 100;
-		
-		clickX *= heatmapFrame.contents().find(clickData.path).outerWidth();
-		clickY *= heatmapFrame.contents().find(clickData.path).outerHeight();
-		
-		clickX += heatmapFrame.contents().find(clickData.path).offset().left;
-		clickY += heatmapFrame.contents().find(clickData.path).offset().top;
-		
-		heatmapDataPoint = { 
-			x: clickX,
-			y: clickY,
-			value: 100
+    function displayHeatmap() {
+
+		heatmapConfig = {
+			container: document.getElementById('heatmapArea'),
+			radius: 10,
+			maxOpacity: .5,
+			minOpacity: 0,
+			blur: .75
 		};
 		
-		heatmapPreparedData.max++;
-		heatmapPreparedData.data.push(heatmapDataPoint);
-    
-    });
-    
-    heatmapView.setData(heatmapPreparedData);
+		heatmapView = heatmap.create(heatmapConfig);
+		
+		heatmapPreparedData = {
+			max: 1,
+			min: 0,
+			data: []
+		};
+		
+		clicksData.forEach(function(clickData) {
+		
+			clickX = parseFloat(clickData.x) / 100;
+			clickY = parseFloat(clickData.y) / 100;
+			
+			clickX *= heatmapFrame.contents().find(clickData.path).outerWidth();
+			clickY *= heatmapFrame.contents().find(clickData.path).outerHeight();
+			
+			clickX += heatmapFrame.contents().find(clickData.path).offset().left;
+			clickY += heatmapFrame.contents().find(clickData.path).offset().top;
+			
+			heatmapDataPoint = { 
+				x: clickX,
+				y: clickY,
+				value: 100
+			};
+			
+			heatmapPreparedData.max++;
+			heatmapPreparedData.data.push(heatmapDataPoint);
+		
+		});
+		
+		heatmapView.setData(heatmapPreparedData);
+    }
+
+    timerId = setInterval(function () {
+        if(document.getElementById('heatmapFrame').contentWindow.document.readyState == 'complete') {
+            clearInterval(timerId);
+            displayHeatmap();
+        }
+    }, 1000);
 }
 
 function displayTemplate(menuInputCallback, error) {
