@@ -64,9 +64,6 @@ function query(cacheName, fromDateTime, toDateTime) {
 			fromDateTimeCacheObjConverted = new Date(cacheObj.fromDateTime);
 			toDateTimeCacheObjConverted = new Date(cacheObj.toDateTime);
 
-			console.log('CacheObje');
-			console.log(fromDateTimeCacheObjConverted + ' ' + toDateTimeCacheObjConverted);
-			console.log(fromDateTime + ' ' + toDateTime);
 			if(fromDateTimeCacheObjConverted <= fromDateTime && toDateTime <= toDateTimeCacheObjConverted) {
 
 				while(fromDateTimeCacheObjConverted < fromDateTime) {
