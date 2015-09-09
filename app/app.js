@@ -32,12 +32,12 @@ import display from 'display';
 		datePickerStart = fromDate;
 		datePickerEnd = toDate;
 
-<<<<<<< HEAD
+// <<<<<<< HEAD
 		console.log(fromDateConverted + ' ' + toDateConverted);
 		console.log(serverDayStartConverted);
 		
-=======
->>>>>>> master
+
+// >>>>>>> master
 		if(fromDateConverted < serverDayStartConverted && toDateConverted <= serverDayStartConverted) {
 			//if(toDateConverted == serverDayStartConverted) {
 				toDateConverted.setDate(toDateConverted.getDate() - 1);
